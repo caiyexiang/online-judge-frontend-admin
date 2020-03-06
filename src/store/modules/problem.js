@@ -24,10 +24,10 @@ const state = {
  */
 const mutations = {
   RESET_PROBLEMS: (state) => {
-    state.problems = defaultProblems
+    state.problems = getDefaultProblem()
   },
   RESET_PROBLEMS_SCORE: (state) => {
-    state.problems_score = defaultProblemsScore
+    state.problems_score = getDefaultScore()
   },
   SET_PROBLEMS: (state, problems) => {
     state.problems = problems

@@ -12,7 +12,7 @@
       <AddButton class="filter-item" @click.native="handleAdd"/>
     </div>
     <el-table v-loading="loading" :data="table" style="width: 100%;" border fit highlight-current-row>
-      <el-table-column label="编号" prop="id" width="80" sortable="custom" align="center" />
+      <el-table-column label="编号" prop="id" width="80" align="center" />
       <el-table-column label="名称" prop="title" align="center" />
       <el-table-column label="状态" prop="private" width="100" align="center">
         <template slot-scope="{ row }">

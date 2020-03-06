@@ -27,8 +27,8 @@ export default {
     }),
     classObj() {
       return {
-        hideSidebar: !this.sidebar.opened,
-        openSidebar: this.sidebar.opened,
+        hideSidebar: !this.sidebar.closed,
+        openSidebar: this.sidebar.closed,
         withoutAnimation: this.sidebar.withoutAnimation,
       }
     }

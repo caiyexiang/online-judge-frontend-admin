@@ -13,7 +13,7 @@
       <AddButton class="filter-item" @click.native="handleAdd" v-permission="'TEACHER'"/>
     </div>
     <el-table v-loading="loading" :data="table" style="width: 100%;" border fit highlight-current-row>
-      <el-table-column label="编号" prop="id" width="80" sortable="custom" align="center" />
+      <el-table-column label="编号" prop="id" width="80" align="center" />
       <el-table-column label="名称" prop="title" align="center" />
       <el-table-column label="班级" prop="group.name" align="center" />
       <el-table-column label="开始时间" prop="begin_time" width="100" align="center">

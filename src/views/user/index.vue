@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" :key="routeName">
     <div class="filter-container">
       <Search v-model="filterQuery.search" class="filter-item" placeholder="输入用户名搜索" style="width:200px;margin-right:20px;" v-if="$route.name !== 'Admin'"/>
       <AddButton class="filter-item" @click.native="handleAdd" v-if="$route.name !== 'Admin'" />
@@ -75,7 +75,7 @@ export default {
       deep: true,
     },
   },
-  created() {
+  activated() {
     this.getTable()
     if (this.$route.name !== 'Admin') {
       this.buttons = [
@@ -104,13 +104,15 @@ export default {
         this.pageQuery.offset = (val - 1) * this.pageQuery.limit
       },
     },
+    routeName () {
+      return this.$route.name
+    }
   },
   methods: {
     getTable() {
       this.loading = true
-      getUsers({ ...this.pageQuery, ...this.filterQuery }).then(res => {
+      getUsers({ ...this.pageQuery, ...this.filterQuery }).then(({ count, results }) => {
         this.loading = false
-        const { count, results } = res
         this.total = count
         this.table = results
       })

@@ -70,6 +70,7 @@ export default {
   data () {
     return {
       options: [],
+      res: [],
       loading: false
     }
   },
@@ -78,8 +79,9 @@ export default {
       limit: this.limit
     }
     Object.assign(params, this.fetchParams)
-    const res = await this.fetchApi(params)
-    this.options = res.results.map(this.processFunc)
+    const { results } = await this.fetchApi(params)
+    this.res = results
+    this.options = results.map(this.processFunc)
   },
   methods: {
     async remoteMethod (query) {
@@ -90,15 +92,18 @@ export default {
           search: query
         }
         Object.assign(params, this.fetchParams)
-        const res = await this.fetchApi(params)
+        const { results } = await this.fetchApi(params)
         this.loading = false
-        this.options = res.results.map(this.processFunc)
+        this.res = results
+        this.options = results.map(this.processFunc)
       } else {
         this.options = []
       }
     },
     emitChange (val) {
       this.$emit('emitChange', val)
+      const data = this.res.find(item => item.id === val)
+      this.$emit('data', data)
     }
   }
 }

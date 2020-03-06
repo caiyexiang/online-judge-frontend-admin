@@ -5,7 +5,7 @@
       <AddButton class="filter-item" @click.native="openDialog('add')" />
     </div>
     <el-table v-loading="loading" :data="table" style="width: 100%;" border fit highlight-current-row>
-      <el-table-column label="ID" prop="id" width="80" sortable="custom" align="center" />
+      <el-table-column label="ID" prop="id" width="80" align="center" />
       <el-table-column label="任务名称" prop="name" align="center"/>
       <el-table-column label="问题" prop="problems" align="center">
       </el-table-column>

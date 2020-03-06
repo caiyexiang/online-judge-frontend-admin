@@ -71,10 +71,12 @@ export default {
     },
     setScoreByType() {
       const total = this.scoreArr.reduce((prev, curr) => prev + curr, 0)
-      if (this.scoreArr.findIndex(item => item === 0) !== -1) {
-        this.$message.error('题型分数上限不能为0！')
-        return
-      }
+      this.notEmptyType.forEach(type => {
+        if (this.scoreArr[type] === 0) {
+          this.$message.error('题型分数上限不能为0！')
+          return
+        }
+      })
       if (total !== 100) {
         this.$message.error('题型分数之和必须等于100！')
         return

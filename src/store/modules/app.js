@@ -2,16 +2,16 @@ import {setLocalStorage, getLocalStorage} from '@/utils/storage'
 
 const state = {
   sidebar: {
-    opened: Boolean(getLocalStorage('sidebarStatus')),
+    closed: Boolean(getLocalStorage('sidebarStatus')),
     withoutAnimation: false
   }
 }
 
 const mutations = {
   TOGGLE_SIDEBAR: state => {
-    state.sidebar.opened = !state.sidebar.opened
+    state.sidebar.closed = !state.sidebar.closed
     state.sidebar.withoutAnimation = false
-    if (state.sidebar.opened) {
+    if (state.sidebar.closed) {
       setLocalStorage('sidebarStatus', '1')
     } else {
       setLocalStorage('sidebarStatus', false)
@@ -19,7 +19,7 @@ const mutations = {
   },
   CLOSE_SIDEBAR: (state, withoutAnimation) => {
     setLocalStorage('sidebarStatus', false)
-    state.sidebar.opened = false
+    state.sidebar.closed = false
     state.sidebar.withoutAnimation = withoutAnimation
   }
 }

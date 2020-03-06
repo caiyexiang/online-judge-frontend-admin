@@ -25,13 +25,16 @@ router.beforeEach(async (to, from, next) => {
       NProgress.done()
     } else {
       // determine whether the user has obtained his permission roles through getInfo
-      const hasPermission = typeof store.getters.permission === 'number' && store.getters.permission >= 0
+      const hasPermission = typeof store.getters.permission === 'number' && store.getters.permission >= 0 && store.getters.permission < 3
       if (hasPermission) {
         next()
       } else {
         try {
           // get user info
           const { permission } = await store.dispatch('user/getInfo')
+          if(permission === 3) {
+            throw Error('student not allow login')
+          }
           // generate accessible routes map based on roles
           const accessRoutes = await store.dispatch('permission/generateRoutes', permission)
           // dynamically add accessible routes
@@ -42,7 +45,7 @@ router.beforeEach(async (to, from, next) => {
         } catch (error) {
           // remove login flag and go to login page to re-login
           await store.dispatch('user/resetInfo')
-          Message.error('缺少访问权限')
+          Message.error('缺少页面访问权限')
           console.error(error)
           next(`/login?redirect=${to.path}`)
           NProgress.done()

@@ -49,7 +49,7 @@ export default {
       return this.id ? patchUser(this.id) : createUser
     },
     createTeacher() {
-      return !this.id && this.$route.name === 'teacher'
+      return !this.id && this.$route.name === 'Teacher'
     },
   },
   watch: {
@@ -70,7 +70,7 @@ export default {
     async submitData() {
       if (this.createTeacher) {
         const data = { teachers: [this.form.username] }
-        await this.$apis.createTeacher(data)
+        await createTeacher(data)
       } else {
         const { name, username, nickname } = this.form
         const data = { name, username, nickname }

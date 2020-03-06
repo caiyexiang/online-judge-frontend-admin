@@ -9,13 +9,17 @@
           v-model="form.group"
           :fetch-api="getGroups"
           placeholder="全部班级"
+          @data="handleGroupChange"
         />
       </el-form-item>
       <el-form-item label="面向课程" prop="course" :error="formError.course">
-        <InputSelector
+        <span v-if="isContest">
+          {{ form.course.name }}
+        </span>
+        <InputSelector v-else
           style="width:130px;"
           class="filter-item"
-          v-model="form.course"
+          v-model="form.course.id"
           :fetch-api="getCourses"
           placeholder="全部课程"
         />
@@ -99,7 +103,7 @@
  */
 import { mapGetters } from 'vuex'
 import { getCourses } from '@/api/course'
-import { getGroups } from '@/api/group'
+import { getGroups, getGroup } from '@/api/group'
 import {
   getContest,
   getContestTemplate,
@@ -122,7 +126,7 @@ const { CODING, CHOICE, CODEFILL, FILLIN, QA } = PROBLEM_ENUM
 const defaultForm = {
   title: '',
   description: '',
-  course: undefined,
+  course: {},
   group: undefined,
   private: true,
   code_share: false,
@@ -206,7 +210,6 @@ export default {
   methods: {
     getData() {
       fetchApi[this.route](this.id).then(res => {
-        res.course = res.course.id
         if (this.isContest) {
           res.begin_time = parseTime(res.begin_time)
           res.end_time = parseTime(res.end_time)
@@ -223,7 +226,7 @@ export default {
       }
       const data = {
         title: this.form.title,
-        course: this.form.course,
+        course: this.form.course.id,
         description: this.form.description,
         problems_id: JSON.stringify(problems_id),
         problems_score: JSON.stringify(this.problems_score),
@@ -246,7 +249,6 @@ export default {
     },
     handleTemplateImport() {
       getContestTemplate(this.fromTemplate).then(res => {
-        res.course = res.course.id
         this.form = res
         this.$store.commit('problem/SET_PROBLEMS', this.form.problem_json)
         this.$store.commit('problem/SET_PROBLEMS_SCORE', this.form.problem_score_json)
@@ -258,6 +260,9 @@ export default {
     handleAdd () {
       this.$store.commit('problem/SET_LOAD_FLAG', false)
       this.$router.push({name: 'ProblemSelect'})
+    },
+    handleGroupChange (data) {
+      this.form.course = data.course
     },
     createTemplateFromContest() {
       createContestTemplate({
