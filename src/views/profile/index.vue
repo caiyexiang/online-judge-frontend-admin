@@ -1,18 +1,22 @@
 <template>
   <div class="app-container" id="container">
-    <ProfileCard />
-    <ProfileChange />
+    <el-card class="left">
+      <Info />
+    </el-card>
+    <el-card class="right">
+      <Settings />
+    </el-card>
   </div>
 </template>
 
 <script>
-import ProfileCard from './components/ProfileCard'
-import ProfileChange from './components/ProfileChange'
+import Info from './components/Info'
+import Settings from './components/Settings'
 export default {
   name: 'Profile',
   components: {
-    ProfileCard,
-    ProfileChange
+    Info,
+    Settings
   }
 }
 </script>
@@ -21,5 +25,12 @@ export default {
 #container {
   display: flex;
   align-items: top;
+  .left {
+    width: 18%;
+    margin-right: 10px;
+  }
+  .right {
+    width: 80%;
+  }
 }
 </style>

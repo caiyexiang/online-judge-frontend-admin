@@ -1,5 +1,5 @@
 <template>
-  <el-card class="card">
+  <div>
     <el-form ref="form" :model="form" status-icon :rules="rules" label-width="100px">
       <el-form-item label="密码" prop="password" :error="formError.password">
         <el-input v-model="form.password" type="password" autocomplete="off" />
@@ -16,7 +16,7 @@
         </el-button>
       </el-form-item>
     </el-form>
-  </el-card>
+  </div>
 </template>
 
 <script>
@@ -67,10 +67,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss" scoped>
-.card {
-  width: 80%;
-  margin-left: 10px;
-}
-</style>

@@ -6,6 +6,8 @@ const state = {
   username: '',
   userid: '',
   permission: -1,
+  name: '',
+  nickname: '',
 }
 
 const mutations = {
@@ -20,10 +22,12 @@ const mutations = {
     state.userid = userid
   },
   SET_USERINFO: (state, userinfo) => {
-    const { id, username, permission } = userinfo
+    const { id, username, permission, name, nickname } = userinfo
     state.permission = permission
     state.username = username
     state.userid = id
+    state.name = name
+    state.nickname = nickname
   },
 }
 

@@ -44,6 +44,10 @@ export function patchUser(id) {
   return data => ajax.patch(`/manage/users/${id}/`, data)
 }
 
+export function updateProfile(id, data) {
+  return ajax.patch(`users/${id}/`, data)
+}
+
 export function getAssistants(params) {
   return ajax.get('/manage/assistants/', params)
 }
