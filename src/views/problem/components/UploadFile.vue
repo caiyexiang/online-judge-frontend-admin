@@ -75,16 +75,16 @@ export default {
       }
       this.formData = new FormData()
       this.$refs.upload.submit()
-      service.post(this.destination, this.formData, config).then(res => {
-        const msg = [h('h3', null, `导入问题成功数: ${res.data.success}`)]
-        Object.entries(res.data.error).forEach(element => {
+      service.post(this.destination, this.formData, config).then(({success, error}) => {
+        const msg = [h('h3', null, `导入问题成功数: ${success}`)]
+        Object.entries(error).forEach(element => {
           msg.push(h('p', null, `${element[0]} : ${element[1]}`))
         })
         this.$alert(h('div', null, msg), '上传情况')
         this.fileList = []
-      }).catch(res => {
+      }).catch(error => {
         this.$message.error('上传错误')
-        console.table(res)
+        console.table(error)
       })
     }
   }
