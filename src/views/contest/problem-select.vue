@@ -39,17 +39,18 @@ export default {
 main {
   width: 100%;
   box-sizing: border-box;
+  overflow: hidden;
   & .right {
-    height: 100vh;
-    overflow: hidden;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    overflow-x: hidden;
   }
   & .left {
-    height: 100vh;
+    height: calc(100vh - 50px);
     float: left;
     width: 350px;
-    height: 100vh;
     padding: 5px;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
   }
 }

@@ -5,6 +5,9 @@ export default {
       formError: {},
     }
   },
+  created() {
+    this.initFormError()
+  },
   activated() {
     this.initFormError()
   },

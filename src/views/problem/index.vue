@@ -69,7 +69,7 @@
         @pagination="getTable"
       />
       <el-dialog :title="`导入${PROBLEM_TYPE_CN[type]}`" :visible.sync="dialogVisible">
-        <UploadFile :destination="uploadUrl[type]" />
+        <UploadFile :destination="uploadUrl[type]" @fetch="getTable"/>
       </el-dialog>
     </div>
   </div>

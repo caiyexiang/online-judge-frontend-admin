@@ -83,7 +83,12 @@ const actions = {
   resetInfo({ commit }) {
     return new Promise(resolve => {
       setUserid('')
-      commit('SET_USERINFO', { ...state }) // reset userinfo
+      commit('SET_USERINFO', {
+        username: '',
+        userid: '',
+        permission: -1,
+      }) // reset userinfo
+      resetRouter()
       resolve()
     })
   },

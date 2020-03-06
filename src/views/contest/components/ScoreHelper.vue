@@ -59,7 +59,7 @@ export default {
       const rest = 100 % total
       let flag = true
       let type, id
-      for (type in this.notEmptyType) {
+      for (type of this.notEmptyType) {
         for (id in this.problems_score[type]) {
           score[type][id] = avg
         }
