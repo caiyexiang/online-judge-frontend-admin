@@ -422,7 +422,7 @@ export const asyncRoutes = [
     component: Layout,
     children: [
       {
-        path: `${process.env.VUE_APP_HOST_URL}`,
+        path: `${document.location.protocol}//${document.location.host}/`,
         meta: { title: '前往OJ首页', icon: 'link' },
       },
     ],

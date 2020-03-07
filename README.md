@@ -18,7 +18,6 @@
 
 ```
 VUE_APP_API_URL=http://example.com/api # devServer使用的API
-VUE_APP_HOST_URL=https://example.com/ # 提供主站和Admin的跳转
 ```
 
 ## 相关项目

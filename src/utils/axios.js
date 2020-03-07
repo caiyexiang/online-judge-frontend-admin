@@ -5,7 +5,7 @@ import store from '@/store'
 
 const config = {
   baseURL: '/api',
-  timeout: 6000,
+  timeout: 20000,
   withCredentials: true
 }
 
@@ -63,7 +63,7 @@ const handleResponseError = error => {
     Message({ message: '您访问太过频繁, 已被限速', type: 'error'})
     return Promise.reject(new Error('429_ACCESS_RESTRICTIONS'))
   } else {
-    Message({ message: '客户端错误', type: 'error'})
+    Message({ message: '请求错误', type: 'error'})
     return Promise.reject(new Error('UNKNOW_ERROR'))
   }
 }

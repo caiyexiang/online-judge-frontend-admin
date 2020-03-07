@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table class="task-log-table">
+    <table class="task-log-table" v-loading="loading">
       <tr>
         <td>用户</td>
         <td>{{ data.submission_a.user.username }}</td>
@@ -74,6 +74,7 @@ export default {
   data() {
     return {
       data: null,
+      loading:false
     }
   },
   watch: {
@@ -86,8 +87,10 @@ export default {
   },
   methods: {
     getData() {
+      this.loading=true
       getCodeCheckLog(this.id).then(res => {
         this.data = res
+        this.loading=false
       })
     },
   },

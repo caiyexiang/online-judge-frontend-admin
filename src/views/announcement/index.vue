@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" v-loading="loading">
     <quill-editor ref="editor" v-model="announcement" :options="{}" />
     <div style="margin-top: 10px;">
       <el-button
@@ -23,12 +23,15 @@ export default {
   },
   data () {
     return {
-      announcement: ''
+      announcement: '',
+      loading: false
     }
   },
-  created () {
+  activated () {
+    this.loading = true
     getAnnouncement().then(res => {
       this.announcement = res.content
+      this.loading = false
     })
   },
   methods: {

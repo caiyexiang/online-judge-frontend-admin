@@ -68,9 +68,12 @@
         :page.sync="page"
         @pagination="getTable"
       />
-      <el-dialog :title="`导入${PROBLEM_TYPE_CN[type]}`" :visible.sync="dialogVisible">
-        <UploadFile :destination="uploadUrl[type]" @fetch="getTable"/>
-      </el-dialog>
+      <!-- 销毁元素触发created钩子 -->
+      <div v-if="dialogVisible">
+        <el-dialog :title="`导入${PROBLEM_TYPE_CN[type]}`" :visible.sync="dialogVisible">
+          <UploadFile :destination="uploadUrl[type]" @fetch="getTable"/>
+        </el-dialog>
+      </div>
     </div>
   </div>
 </template>
@@ -165,9 +168,9 @@ export default {
         { name: '单选', value: false },
       ],
       uploadUrl: {
-        [CODING]: 'manage/problems/fps-import/',
-        [CHOICE]: 'manage/choices/import/',
-        [FILLIN]: 'manage/fill-in-problems/import/',
+        [CODING]: '/api/manage/problems/fps-import/',
+        [CHOICE]: '/api/manage/choices/import/',
+        [FILLIN]: '/api/manage/fill-in-problems/import/',
       },
       PROBLEM_TYPE_CN,
       ...PROBLEM_ENUM

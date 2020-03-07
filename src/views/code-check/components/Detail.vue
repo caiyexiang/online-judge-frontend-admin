@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <p>
       状态：<el-tag :type="statusMap[list.status].type">
         {{ statusMap[list.status].name }}
@@ -56,12 +56,15 @@ export default {
         1: { name: '进行中', type: '' },
         2: { name: '已完成', type: 'success' },
       },
+      loading: false,
     }
   },
   methods: {
     getData() {
+      this.loading = true
       getCodeCheckTask(this.id).then(res => {
         this.list = res
+        this.loading = false
       })
     },
   },

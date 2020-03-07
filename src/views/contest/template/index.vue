@@ -14,13 +14,7 @@
     <el-table v-loading="loading" :data="table" style="width: 100%;" border fit highlight-current-row>
       <el-table-column label="编号" prop="id" width="80" align="center" />
       <el-table-column label="名称" prop="title" align="center" />
-      <el-table-column label="状态" prop="private" width="100" align="center">
-        <template slot-scope="{ row }">
-          <el-tag>
-            {{ row.private | statusFilter }}
-          </el-tag>
-        </template>
-      </el-table-column>
+      <el-table-column label="课程" prop="course.name" align="center" />
       <el-table-column label="操作" align="center" width="250" class-name="small-padding">
         <template slot-scope="{ row }">
           <el-button size="mini" type="primary" @click="handleEdit(row.id)">

@@ -2,6 +2,10 @@
   <div class="app-container">
     <div class="filter-container">
       <Search v-model="filterQuery.search" class="filter-item" placeholder="输入测验名称搜索" style="width:200px;" />
+      <el-select class="filter-item" clearable v-model="filterQuery.is_exam" placeholder="测验+考试">
+        <el-option label="考试" :value="true" />
+        <el-option label="测验" :value="false" />
+      </el-select>
       <InputSelector
         style="width:130px;"
         class="filter-item"
@@ -10,7 +14,7 @@
         clearable
         placeholder="全部班级"
       />
-      <AddButton class="filter-item" @click.native="handleAdd" v-permission="'TEACHER'"/>
+      <AddButton class="filter-item" @click.native="handleAdd" v-permission="'TEACHER'" />
     </div>
     <el-table v-loading="loading" :data="table" style="width: 100%;" border fit highlight-current-row>
       <el-table-column label="编号" prop="id" width="80" align="center" />
@@ -24,13 +28,6 @@
       <el-table-column label="结束时间" prop="end_time" width="100" align="center">
         <template slot-scope="{ row }">
           {{ row.end_time | parseTime }}
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" prop="private" width="100" align="center">
-        <template slot-scope="{ row }">
-          <el-tag>
-            {{ row.private | statusFilter }}
-          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="类型" prop="is_exam" width="100" align="center">
@@ -87,13 +84,10 @@ export default {
     AddButton,
     Pagination,
     InputSelector,
-    Search
+    Search,
   },
   directives: { permission },
   filters: {
-    statusFilter(is_private) {
-      return is_private ? '公开' : '非公开'
-    },
     typeFilter(is_exam) {
       return is_exam ? '考试' : '测验'
     },
@@ -111,8 +105,9 @@ export default {
       filterQuery: {
         group: undefined,
         search: undefined,
+        is_exam: undefined,
       },
-      getGroups
+      getGroups,
     }
   },
   activated() {
@@ -120,7 +115,7 @@ export default {
   },
   watch: {
     filterQuery: {
-      handler (val, oldVal) {
+      handler(val, oldVal) {
         this.page = 1
         this.getTable()
       },

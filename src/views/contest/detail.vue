@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <!-- 遵从原样入，原样出的原则，尽量和api提供的数据命名/结构一致 -->
-    <el-form ref="form" :model="form" label-width="100px">
+    <el-form ref="form" :model="form" label-width="100px" v-loading="loading">
       <el-form-item v-if="isContest" label="面向班级" prop="group" :error="formError.group">
         <InputSelector
           style="width:130px;"
@@ -10,6 +10,7 @@
           :fetch-api="getGroups"
           placeholder="全部班级"
           @data="handleGroupChange"
+          :disabled="this.$route.name === 'EditContest'"
         />
       </el-form-item>
       <el-form-item label="面向课程" prop="course" :error="formError.course">
@@ -164,6 +165,7 @@ export default {
         score: false,
       },
       form: defaultForm,
+      loading: false,
       submitApi: {
         EditContest: updateContest(this.$route.params.id),
         AddContest: createContest,
@@ -209,7 +211,9 @@ export default {
   },
   methods: {
     getData() {
+      this.loading = true
       fetchApi[this.route](this.id).then(res => {
+        this.loading = false
         if (this.isContest) {
           res.begin_time = parseTime(res.begin_time)
           res.end_time = parseTime(res.end_time)
@@ -239,6 +243,7 @@ export default {
           is_template: this.form.is_template,
           begin_time: this.form.begin_time,
           end_time: this.form.end_time,
+          is_exam: this.form.is_exam
         })
       } else {
         Object.assign(data, { user: this.userid })

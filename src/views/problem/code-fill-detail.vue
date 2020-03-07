@@ -7,6 +7,9 @@
       <el-form-item label="作者" prop="source" :error="formError.source">
         <el-input v-model="form.source" />
       </el-form-item>
+      <el-form-item label="难度" prop="difficulty" :error="formError.difficulty">
+        <el-rate :max="3" v-model="form.difficulty"/>
+      </el-form-item>
       <el-form-item label="时间限制" prop="timeLimit" :error="formError.time_limit">
         <el-input v-model="form.time_limit">
           <template slot="append">
