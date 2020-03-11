@@ -18,7 +18,7 @@
         <InputSelector style="width:130px;" class="filter-item" v-model="query.tag" clearable />
         <Search v-model="query.search" class="filter-item" placeholder="输入题目名称搜索" style="width:200px;" />
         <AddButton class="filter-item" @click.native="handleAdd" v-show="route !== 'ProblemSelect'"/>
-        <ImportButton class="filter-item" @click.native="handleImport" v-show="(type === CHOICE || type === CODING) && route!== 'ProblemSelect'" />
+        <ImportButton class="filter-item" @click.native="handleImport" v-show="(type === CHOICE || type === CODING || type === FILLIN) && route!== 'ProblemSelect'" />
       </div>
       <!-- 当遇到复杂度比较大的table,可以不使用Table组件 -->
       <!-- 删除按钮设个v-permission就行了，多选类型设个v-if -->

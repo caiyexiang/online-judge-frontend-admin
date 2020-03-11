@@ -14,6 +14,16 @@
         </el-button>
       </el-form-item>
     </div>
+    <el-dialog :visible.sync="dialogVisible" title="导入结果" append-to-body>
+      <h3>导入成功数：<span style="color:green">{{importResult.count}}</span> </h3>
+      <h3>导入重复数：<span style="color:red">{{importResult.username_exist.length}}</span> </h3>
+      <h3>重复用户名列表：</h3>
+      <div class="duplication" v-if="importResult.username_exist.length">
+        <p v-for="(item,index) of importResult.username_exist" :key="index">
+          {{ item }}
+        </p>
+      </div>
+    </el-dialog>
   </el-form>
 </template>
 
@@ -28,25 +38,42 @@ export default {
         username: '',
         name: '',
       },
+      importResult: {
+        count: 0,
+        username_exist: [],
+        created: []
+      },
+      dialogVisible: false,
     }
   },
   methods: {
     async submitData() {
-      let userList = this.form.username
+      const userList = this.form.username
         .split('\n')
         .map(item => item.trim())
         .filter(Boolean)
-      let nameList = this.form.name
+      if(!userList.length) {
+        this.$message.error('用户名列表为空')
+        return
+      }
+      const nameList = this.form.name
         .split('\n')
         .map(item => item.trim())
         .filter(Boolean)
-      let data = { username: userList, name: nameList }
+      const data = { username: userList, name: nameList }
       const res = await createUsers(data)
-      this.$message.success('导入成功')
+      this.importResult = res
+      this.dialogVisible = true
       this.resetForm()
       this.$emit('fetch')
-      this.$emit('close', 'import')
     },
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.duplication{
+  height: 100px;
+  overflow-y:auto;
+}
+</style>

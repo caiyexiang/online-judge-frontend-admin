@@ -1,7 +1,6 @@
 <template>
   <div class="login-container">
     <el-form ref="form" :model="form" :rules="rules" class="login-form" autocomplete="on" label-position="left">
-
       <div class="title-container">
         <h3 class="title">SZUOC管理端登陆</h3>
       </div>
@@ -46,13 +45,20 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="submitForm">Login</el-button>
+      <el-button
+        :loading="loading"
+        type="primary"
+        style="width:100%;margin-bottom:30px;"
+        @click.native.prevent="submitForm"
+        >Login</el-button
+      >
     </el-form>
   </div>
 </template>
 
 <script>
 import formMixin from '@/mixins/formMixin'
+import { setLocalStorage } from '@/utils/storage'
 export default {
   name: 'Login',
   mixins: [formMixin],
@@ -60,17 +66,17 @@ export default {
     return {
       form: {
         username: '',
-        password: ''
+        password: '',
       },
       rules: {
-        username: [{ required: true, trigger: 'blur'}],
-        password: [{ required: true, trigger: 'blur'}]
+        username: [{ required: true, trigger: 'blur' }],
+        password: [{ required: true, trigger: 'blur' }],
       },
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
     }
   },
   watch: {
@@ -82,13 +88,13 @@ export default {
           this.otherQuery = this.getOtherQuery(query)
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     checkCapslock(e) {
       const { key } = e
-      this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')
+      this.capsTooltip = key && key.length === 1 && key >= 'A' && key <= 'Z'
     },
     showPwd() {
       if (this.passwordType === 'password') {
@@ -100,9 +106,14 @@ export default {
         this.$refs.password.focus()
       })
     },
-    async submitData () {
+    async submitData() {
       this.loading = true
-      await this.$store.dispatch('user/login', this.form)
+      const { last_log } = await this.$store.dispatch('user/login', this.form)
+      /**
+       * 跨页面缓存登陆日志，登陆后后台查看
+       */
+      setLocalStorage('last_login_time', last_log ? last_log.last_login_time : '')
+      setLocalStorage('last_login_ip', last_log ? last_log.last_login_ip : '')
       this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
       this.loading = false
     },
@@ -113,8 +124,8 @@ export default {
         }
         return acc
       }, {})
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -122,8 +133,8 @@ export default {
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
-$light_gray:#fff;
+$bg: #283443;
+$light_gray: #fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -166,9 +177,9 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
+$light_gray: #eee;
 
 .login-container {
   min-height: 100%;

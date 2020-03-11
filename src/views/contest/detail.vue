@@ -8,7 +8,7 @@
           class="filter-item"
           v-model="form.group"
           :fetch-api="getGroups"
-          placeholder="全部班级"
+          placeholder="搜索并选择班级"
           @data="handleGroupChange"
           :disabled="this.$route.name === 'EditContest'"
         />
@@ -17,7 +17,8 @@
         <span v-if="isContest">
           {{ form.course.name }}
         </span>
-        <InputSelector v-else
+        <InputSelector
+          v-else
           style="width:130px;"
           class="filter-item"
           v-model="form.course.id"
@@ -47,14 +48,23 @@
           placeholder="选择结束时间"
         />
       </el-form-item>
-      <el-form-item v-if="isContest" label="实验状态" prop="private" :error="formError.private">
-        <el-switch v-model="form.private" active-text="非公开" inactive-text="公开" />
+      <el-form-item v-if="isContest" label="是否学生可见" prop="visible" :error="formError.visible">
+        <el-tooltip placement="top">
+          <div slot="content">可见时学生可以在列表中看到此测验，不可见时则相反</div>
+          <el-switch v-model="form.visible" active-text="可见" inactive-text="不可见" />
+        </el-tooltip>
       </el-form-item>
       <el-form-item v-if="isContest" label="代码分享" prop="code_share" :error="formError.code_share">
-        <el-switch v-model="form.code_share" active-text="允许" inactive-text="不允许" />
+        <el-tooltip placement="top">
+          <div slot="content">允许时学生可以看到别人的提交的代码</div>
+          <el-switch v-model="form.code_share" active-text="允许" inactive-text="不允许" />
+        </el-tooltip>
       </el-form-item>
       <el-form-item v-if="isContest" label="实验类型" prop="is_exam" :error="formError.is_exam">
-        <el-switch v-model="form.is_exam" active-text="考试" inactive-text="测验" />
+        <el-tooltip placement="top">
+          <div slot="content">测验类型是普通的实验，考试类型在期中考/期末考时开启</div>
+          <el-switch v-model="form.is_exam" active-text="考试" inactive-text="测验" />
+        </el-tooltip>
       </el-form-item>
       <el-form-item label="题目列表" prop="problem_json" :error="formError.problems_score">
         <div class="button-group">
@@ -86,13 +96,13 @@
       </el-form-item>
     </el-form>
     <el-dialog title="预览试卷" :visible.sync="dialogVisible.preview">
-      <Preview  @close="dialogVisible.preview = false"/>
+      <Preview @close="dialogVisible.preview = false" />
     </el-dialog>
     <el-dialog title="随机出题" :visible.sync="dialogVisible.random">
-      <RandomSelect @close="dialogVisible.random = false"/>
+      <RandomSelect @close="dialogVisible.random = false" />
     </el-dialog>
     <el-dialog title="分数助手" :visible.sync="dialogVisible.score">
-      <ScoreHelper @close="dialogVisible.score = false"/>
+      <ScoreHelper @close="dialogVisible.score = false" />
     </el-dialog>
   </div>
 </template>
@@ -114,7 +124,7 @@ import {
   createContestTemplate,
 } from '@/api/contest'
 import { parseTime, getDefaultProblem, getDefaultScore } from '@/utils'
-import { PROBLEM_ENUM, TYPE_LIST } from '@/utils/constant'
+import { PROBLEM_ENUM, TYPE_LIST, PROBLEM_TYPE_CN } from '@/utils/constant'
 import formMixin from '@/mixins/formMixin'
 import InputSelector from '@/components/InputSelector'
 import Preview from './components/Preview'
@@ -129,7 +139,7 @@ const defaultForm = {
   description: '',
   course: {},
   group: undefined,
-  private: true,
+  visible: false,
   code_share: false,
   is_template: false,
   begin_time: '',
@@ -153,7 +163,7 @@ export default {
     ProblemList,
     InputSelector,
     RandomSelect,
-    ScoreHelper
+    ScoreHelper,
   },
   mixins: [formMixin],
   data() {
@@ -218,6 +228,7 @@ export default {
           res.begin_time = parseTime(res.begin_time)
           res.end_time = parseTime(res.end_time)
         }
+        res = this.removeInvalidProblem(res)
         this.form = res
         this.$store.commit('problem/SET_PROBLEMS', this.form.problem_json)
         this.$store.commit('problem/SET_PROBLEMS_SCORE', this.form.problem_score_json)
@@ -238,12 +249,12 @@ export default {
       if (this.isContest) {
         Object.assign(data, {
           group: this.form.group,
-          private: this.form.private,
+          visible: this.form.visible,
           code_share: this.form.code_share,
           is_template: this.form.is_template,
           begin_time: this.form.begin_time,
           end_time: this.form.end_time,
-          is_exam: this.form.is_exam
+          is_exam: this.form.is_exam,
         })
       } else {
         Object.assign(data, { user: this.userid })
@@ -254,7 +265,7 @@ export default {
     },
     handleTemplateImport() {
       getContestTemplate(this.fromTemplate).then(res => {
-        this.form = res
+        this.form = { ...defaultForm, ...res }
         this.$store.commit('problem/SET_PROBLEMS', this.form.problem_json)
         this.$store.commit('problem/SET_PROBLEMS_SCORE', this.form.problem_score_json)
       })
@@ -262,11 +273,11 @@ export default {
     openDialog(name) {
       this.dialogVisible[name] = true
     },
-    handleAdd () {
+    handleAdd() {
       this.$store.commit('problem/SET_LOAD_FLAG', false)
-      this.$router.push({name: 'ProblemSelect'})
+      this.$router.push({ name: 'ProblemSelect' })
     },
-    handleGroupChange (data) {
+    handleGroupChange(data) {
       this.form.course = data.course
     },
     createTemplateFromContest() {
@@ -279,6 +290,29 @@ export default {
     },
     createContestFromTemplate() {
       this.$router.push({ name: 'AddContest', query: { template: this.id } })
+    },
+    /**
+     * 移除问题列表中已经失效的问题
+     */
+    removeInvalidProblem(data) {
+      let msg = ''
+      const { problem_json, problem_score_json } = data
+      for (const type in problem_json) {
+        problem_json[type].forEach((problem, index) => {
+          if (problem.deleted === true) {
+            msg += `<p style="color:red"> ${PROBLEM_TYPE_CN[type]} ${problem.id} </p>`
+            problem_json[type].splice(index, 1)
+            delete problem_score_json[type][problem.id]
+          }
+        })
+      }
+      if (msg) {
+        msg = '<p>由于下列题目在题库中被删除而在列表中移去，请重新分配分数并且保存该测验：</p>' + msg
+        this.$alert(msg, '题目失效提示', {
+          dangerouslyUseHTMLString: true,
+        })
+      }
+      return data
     },
   },
 }

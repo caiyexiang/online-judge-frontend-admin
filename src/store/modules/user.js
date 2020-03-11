@@ -39,7 +39,7 @@ const actions = {
         .then(response => {
           setUserid(response.id)
           commit('SET_USERID', response.id)
-          resolve()
+          resolve(response)
         })
         .catch(error => {
           reject(error)

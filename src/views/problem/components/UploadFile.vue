@@ -21,16 +21,19 @@
         下载客观题导入模版
       </el-button>
       <div slot="tip" class="el-upload__tip">
-        选择题请上传xlsx文件,编程题请上传fps-xml文件，其余题目请使用新增功能，文件体积最大是10MB
+        选择填空题请上传xlsx文件,编程题请上传fps-xml文件,其余题目请使用新增功能,文件体积最大是10MB
       </div>
     </el-upload>
     <div class="count">
-      <p>导入成功数：{{ successNum }}，导入失败数：{{ errorNum }}</p>
+      <p>上传成功数：{{ successNum }}, 上传失败数：{{ errorNum }}</p>
     </div>
     <div class="msg">
-      <p v-for="(item,index) of msgList" :key="index" :class="[item.type === 'success'? successClass : errorClass]">
+      <p v-for="(item,index) of msgList" :key="index" class="error-msg">
         {{item.file}}: {{ item.text }}
       </p>
+    </div>
+    <div class="table">
+      <ImportTask />
     </div>
   </div>
 </template>
@@ -39,6 +42,9 @@
 import { downloadProblemTemplate } from '@/api/problem'
 export default {
   name: 'UploadFile',
+  components:{
+    ImportTask: () => import('./ImportTask')
+  },
   props: {
     destination: {
       type: String,
@@ -49,16 +55,12 @@ export default {
     return {
       fileList: [],
       msgList: [],
-      successClass: 'success-msg',
-      errorClass: 'error-msg'
+      successNum: 0
     }
   },
   computed: {
-    successNum () {
-      return this.msgList.filter(msg => msg.type==='success').length
-    },
     errorNum () {
-      return this.msgList.filter(msg => msg.type==='error').length
+      return this.msgList.length
     }
   },
   methods: {
@@ -68,21 +70,12 @@ export default {
     submitUpload() {
       this.$refs.upload.submit()
     },
-    handleSuccess({success, error}, file) {
-      const msg = {file: file.name}
-      if(success) {
-        msg.type="success"
-        msg.text="导入成功"
-      } else {
-        msg.type="error"
-        const errorText = Object.values(error)[0]
-        msg.text=`上传成功，但是导入失败，服务器返回信息：${errorText}`
-      }
-      this.msgList.unshift(msg)
-    },
     handleError(error, file) {
       const msg = {type:'error', text: '上传失败', file: file.name}
       this.msgList.unshift(msg)
+    },
+    handleSuccess() {
+      this.successNum++
     }
   },
 }
@@ -90,20 +83,13 @@ export default {
 
 <style lang="scss" scoped>
 .msg {
-  max-height: 300px;
+  max-height: 100px;
   overflow: auto;
 }
 .count {
   p {
     color: silver;
   }
-}
-.success-msg {
-  border:1px solid green;
-  border-radius: 3px;
-  background: rgb(218, 255, 218);
-  padding: 3px;
-  color: green;
 }
 .error-msg {
   border:1px solid red;

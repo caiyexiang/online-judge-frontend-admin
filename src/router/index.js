@@ -105,7 +105,7 @@ export const asyncRoutes = [
     path: '/announcement',
     component: Layout,
     meta: {
-      permission: TEACHER,
+      permission: ADMIN,
     },
     redirect: '/announcement/index',
     children: [

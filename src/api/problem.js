@@ -103,3 +103,7 @@ export function updateCodeFill (id) {
 export function downloadProblemTemplate (filename) {
   return ajax.download(`/download/problem_template.xls`, 'excel', filename)
 }
+
+export function getImportTasks(params) {
+  return ajax.get(`/manage/import-task/`, params)
+}

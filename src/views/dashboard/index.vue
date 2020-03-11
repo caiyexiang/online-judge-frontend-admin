@@ -1,16 +1,34 @@
 <template>
   <div class="app-container">
-    <!-- TODO: 登陆时间和登陆地点/以及数据可视化 -->
-    <h2>欢迎 {{ username }} 来到深圳大学在线判题系统后台管理端。</h2>
+    <!-- TODO: 数据可视化 -->
+    <h3>
+      欢迎 {{ username }} 用户
+      <span v-if="ip">, 您的上一次登陆时间是 {{ time | parseTime }}, 登陆地址是 {{ ip }} </span>
+    </h3>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { parseTime } from '@/utils'
+import { getLocalStorage } from '@/utils/storage'
 export default {
   name: 'Dashboard',
+  data() {
+    return {
+      ip: '',
+      time: '',
+    }
+  },
+  filters: {
+    parseTime
+  },
   computed: {
-    ...mapGetters(['username'])
+    ...mapGetters(['username', 'id']),
+  },
+  created() {
+    this.ip = getLocalStorage('last_login_ip')
+    this.time = getLocalStorage('last_login_time')
   }
 }
 </script>
