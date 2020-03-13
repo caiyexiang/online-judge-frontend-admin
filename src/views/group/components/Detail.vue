@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form ref="form" :model="form">
+    <el-form ref="form" :model="form" v-loading="loading">
       <el-form-item label="班级名称" prop="name" :error="formError.name" required>
         <el-input v-model="form.name" placeholder="输入班级名称" />
       </el-form-item>
@@ -67,6 +67,7 @@ export default {
       courseApi: getCourses,
       teacherApi: getUsers,
       teacherParams: { permission: 1 },
+      loading: false
     }
   },
   computed: {
@@ -84,8 +85,10 @@ export default {
   },
   methods: {
     async getData() {
+      this.loading = true
       if (this.id) {
         const res = await getGroup(this.id)
+        this.loading = false
         res.course = res.course.id
         res.teacher = res.teacher.map(item => item.username)
         res.users = res.users.map(item => item.username).join('\r\n')

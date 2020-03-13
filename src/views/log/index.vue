@@ -39,7 +39,7 @@ export default {
       table: [],
       total: 0,
       loading: false,
-      columns: { last_login_time: '时间', last_login_ip: 'IP地址', action: '操作' },
+      columns: { last_login_time: '时间', last_login_ip: 'IP地址', username: '用户名', action: '操作' },
     }
   },
   watch: {
@@ -72,6 +72,7 @@ export default {
         const { count, results } = res
         this.total = count
         results.forEach(item => {
+          item.username = item.user ? item.user.username : ''
           item.last_login_time = parseTime(item.last_login_time)
         })
         this.table = results
