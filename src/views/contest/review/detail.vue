@@ -1,7 +1,7 @@
 <template>
-  <el-container class="container">
+  <el-container class="container" v-loading="loading">
     <el-aside class="aside">
-      <ExportWord :problems="problems" :user="userId" :contestId="contest"/>
+      <ExportWord :problems="problems" :user="userId" :contestId="contest" />
       <el-form>
         <el-form-item v-for="type of types" :key="type" :error="formError[type2score[type]]">
           <div v-if="problems[type] && problems[type].length">
@@ -37,7 +37,7 @@
         :is="currentComponent"
         :key="`${currentType}-${currentIndex}`"
         :problem="currentProblem"
-        :index="currentIndex+1"
+        :index="currentIndex + 1"
       />
     </el-main>
   </el-container>
@@ -54,7 +54,15 @@ import FillIn from '@/components/Question/FillIn'
 import { FormError } from '@/utils/error'
 import { PROBLEM_ENUM, PROBLEM_TYPE_CN } from '@/utils/constant.js'
 import ExportWord from './components/ExportWord'
-import { getSubmissions, getSubmission, getCodeFillSubmissions, getCodeFillSubmission, getContestSubmission, getQASubmission, updateContestSubmission } from '@/api/submission'
+import {
+  getSubmissions,
+  getSubmission,
+  getCodeFillSubmissions,
+  getCodeFillSubmission,
+  getContestSubmission,
+  getQASubmission,
+  updateContestSubmission,
+} from '@/api/submission'
 import { getContest } from '@/api/contest'
 const { CODING, CHOICE, FILLIN, CODEFILL, QA } = PROBLEM_ENUM
 const type2component = {
@@ -62,14 +70,14 @@ const type2component = {
   [CODEFILL]: 'Coding',
   [QA]: 'Qa',
   [CHOICE]: 'Choice',
-  [FILLIN]: 'FillIn'
+  [FILLIN]: 'FillIn',
 }
 const type2score = {
   [CODING]: 'coding_score',
   [CHOICE]: 'choice_score',
   [FILLIN]: 'fill_in_score',
   [CODEFILL]: 'code_fill_score',
-  [QA]: 'qa_score'
+  [QA]: 'qa_score',
 }
 export default {
   name: 'EditReview',
@@ -78,9 +86,9 @@ export default {
     Qa,
     Choice,
     FillIn,
-    ExportWord
+    ExportWord,
   },
-  data () {
+  data() {
     return {
       id: Number(this.$route.params.submission),
       title: '2016150001 - C语言测验 批阅',
@@ -90,45 +98,51 @@ export default {
       scores: { [CODING]: [], [CHOICE]: [], [FILLIN]: [], [CODEFILL]: [], [QA]: [] },
       choiceSubmission: {},
       fillInSubmission: {},
-      formError: { 'coding_score': '', 'choice_score': '', 'fill_in_score': '', 'code_fill_score': '', 'qa_score': '' },
+      formError: { coding_score: '', choice_score: '', fill_in_score: '', code_fill_score: '', qa_score: '' },
       totalScore: 0,
       userId: 0,
       username: '',
       currentIndex: 0,
       currentType: CODING,
       // 调节此数组可以调节侧边栏显示顺序 [CHOICE, FILLIN, CODING, CODEFILL, QA]
-      types: Object.values(PROBLEM_ENUM),
+      types: [CHOICE, FILLIN, CODING, CODEFILL, QA],
       PROBLEM_TYPE_CN,
       type2score,
       getSubmissionsApi: {
         [CODING]: getSubmissions,
-        [CODEFILL]: getCodeFillSubmissions
+        [CODEFILL]: getCodeFillSubmissions,
       },
       getSubmissionDetailApi: {
         [CODING]: getSubmission,
         [CODEFILL]: getCodeFillSubmission,
-        [QA]: getQASubmission
-      }
+        [QA]: getQASubmission,
+      },
     }
   },
   computed: {
-    currentProblem () {
+    currentProblem() {
       return this.problems[this.currentType][this.currentIndex]
     },
-    currentComponent () {
+    currentComponent() {
       return type2component[this.currentType]
-    }
+    },
   },
-  async created () {
+  async created() {
+    this.loading = true
     await this.fetchSubmission()
     await this.fetchContest()
     this.loading = false
-    // 让currentComponent的信息刷新一下
+    // 自动选择
+    for (const type of this.types) {
+      if (this.problems[type].length > 0) {
+        this.currentType = type
+        break
+      }
+    }
     this.currentIndex = 0
-    this.currentType = CHOICE
   },
   methods: {
-    async fetchSubmission () {
+    async fetchSubmission() {
       try {
         const res = await getContestSubmission(this.id)
         for (const type of Object.values(PROBLEM_ENUM)) {
@@ -142,41 +156,42 @@ export default {
         console.log(err)
       }
     },
-    async fetchContest () {
+    async fetchContest() {
       try {
         const res = await getContest(this.contest)
         this.title = `${this.userId} - ${res.title} 题目批阅`
-        this.problems = res.problem_json
+        const problems = res.problem_json
         for (const type of this.types) {
-          if (!this.problems[type]) this.problems[type] = []
+          if (!problems[type]) problems[type] = []
         }
         const codeSubmissionParams = {
           limit: 1,
           user: this.userId,
-          contest: this.contest
+          contest: this.contest,
         }
         // debug中，之后会合并所有的问题解析。
         for (const type of [CODING, CODEFILL]) {
-          for (const item of this.problems[type]) {
+          for (const item of problems[type]) {
             item.status = '没有提交'
+            item.type = type
             item.submissionId = -1
             item.demoInput = item.sample_input_json.join('').replace(/\\n/g, '<br/>')
             item.demoOutput = item.sample_output_json.join('').replace(/\\n/g, '<br/>')
             item.maxScore = res.problem_score_json[type][item.id] || 100
             item.output = ''
             const codeSubmissions = await this.getSubmissionsApi[type](
-              Object.assign({}, codeSubmissionParams, { problem: item.id })
+              Object.assign({}, codeSubmissionParams, { problem: item.id }),
             )
             if (codeSubmissions.count) {
               item.submissionId = codeSubmissions.results[0].id
               const codeSubmissionDetail = await this.getSubmissionDetailApi[type](item.submissionId)
-              const { code, language, status, output } = codeSubmissionDetail
-              Object.assign(item, { answer: code, language, status, output })
+              const { code, language, status, output, user } = codeSubmissionDetail
+              Object.assign(item, { answer: code, language, status, output, user })
             }
             item.score = (this.scores[type][item.id] && this.scores[type][item.id][item.submissionId]) || 0
           }
         }
-        for (const item of this.problems[QA]) {
+        for (const item of problems[QA]) {
           item.description = item.description.replace(/\\n/g, '')
           item.status = '没有提交'
           const scoreJson = this.scores[QA][item.id]
@@ -192,7 +207,7 @@ export default {
             item.comment = comment || ''
           }
         }
-        for (const item of this.problems[CHOICE]) {
+        for (const item of problems[CHOICE]) {
           item.description = item.description.replace(/\\n/g, '')
           item.options = JSON.parse(item.choice)
           item.isMultiple = item.multiple
@@ -200,25 +215,26 @@ export default {
           item.answer = this.choiceSubmission[item.id] || []
           item.score = this.scores[CHOICE][item.id] || 0
         }
-        for (const item of this.problems[FILLIN]) {
+        for (const item of problems[FILLIN]) {
           item.description = item.description.replace(/\\n/g, '')
           item.maxScore = res.problem_score_json[FILLIN][item.id]
           item.answer = this.fillInSubmission[item.id] || []
           item.score = this.scores[FILLIN][item.id] || 0
         }
+        this.problems = problems
       } catch (err) {
         this.$message.error('获取数据失败')
         console.error(err)
       }
     },
-    switchProblem (type, index) {
+    switchProblem(type, index) {
       this.currentType = type
       this.currentIndex = index
     },
-    plainState (type, index) {
+    plainState(type, index) {
       return this.currentType === type && this.currentIndex === index
     },
-    submitReview () {
+    submitReview() {
       const data = {}
       for (const type of this.types) {
         const scores = {}
@@ -235,18 +251,20 @@ export default {
         }
         data[type2score[type]] = JSON.stringify(scores)
       }
-      updateContestSubmission(this.id)(data).then(res => {
-        this.$message.success('提交成功')
-      }).catch(err => {
-        this.$message.error('提交失败')
-        if (err instanceof FormError) {
-          const { data } = err
-          this.formError = data
-        }
-        console.error(err)
-      })
-    }
-  }
+      updateContestSubmission(this.id)(data)
+        .then(res => {
+          this.$message.success('提交成功')
+        })
+        .catch(err => {
+          this.$message.error('提交失败')
+          if (err instanceof FormError) {
+            const { data } = err
+            this.formError = data
+          }
+          console.error(err)
+        })
+    },
+  },
 }
 </script>
 

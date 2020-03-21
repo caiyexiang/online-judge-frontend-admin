@@ -51,6 +51,9 @@ export default {
       this.loading = true
       getJudgers(this.pageQuery).then(({ count, results }) => {
         this.loading = false
+        results.forEach(item => {
+          item.is_alive = item.is_alive ? '在线' : '离线'
+        })
         this.total = count
         this.table = results
       })

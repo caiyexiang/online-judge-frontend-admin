@@ -88,13 +88,13 @@ export default {
       this.loading = true
       if (this.id) {
         const res = await getGroup(this.id)
-        this.loading = false
         res.course = res.course.id
         res.teacher = res.teacher.map(item => item.username)
         res.users = res.users.map(item => item.username).join('\r\n')
         res.assistant = res.assistant.map(item => item.username).join('\r\n')
         this.form = res
       }
+      this.loading = false
     },
     async submitData() {
       const users = this.form.users

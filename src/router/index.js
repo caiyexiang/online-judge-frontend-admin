@@ -119,6 +119,21 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/code-submission/:id',
+    name: 'CodeSubmission',
+    meta: { title: '提交记录'},
+    hidden:true,
+    component: () => import('@/views/submission/index'),
+  },
+  {
+    path: '/code-fill-submission/:id',
+    name: 'CodeFillSubmission',
+    meta: { title: '提交记录'},
+    hidden:true,
+    component: () => import('@/views/submission/index'),
+  },
+
+  {
     path: '/user',
     component: Layout,
     redirect: '/user/student',
@@ -138,7 +153,7 @@ export const asyncRoutes = [
         path: 'assistant',
         component: () => import('@/views/user/assistant'),
         name: 'Assistant',
-        meta: { title: '助教管理', permission: TEACHER, icon: 'assistant' },
+        meta: { title: '助教管理', permission: ADMIN, icon: 'assistant' },
       },
       {
         path: 'teacher',

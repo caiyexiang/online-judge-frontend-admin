@@ -62,7 +62,7 @@
       </el-form-item>
       <el-form-item v-if="isContest" label="实验类型" prop="is_exam" :error="formError.is_exam">
         <el-tooltip placement="top">
-          <div slot="content">测验类型是普通的实验，考试类型在期中考/期末考时开启</div>
+          <div slot="content">考试模式下测验结束后不能看到测验内容和提交信息<br/>测验模式下测验结束后仍可以看到测验内容和提交信息</div>
           <el-switch v-model="form.is_exam" active-text="考试" inactive-text="测验" />
         </el-tooltip>
       </el-form-item>

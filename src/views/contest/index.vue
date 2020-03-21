@@ -40,16 +40,23 @@
       <el-table-column label="操作" align="center" width="250" class-name="small-padding">
         <template slot-scope="{ row }">
           <el-button
-            v-if="row.scored_status !== 'waiting' && row.scored_status !== 'running'"
             size="mini"
             type="success"
             @click="handleReview(row.id)"
+            v-if="row.scored_status !== 'waiting' && row.scored_status !== 'running'"
           >
             批阅
           </el-button>
-          <el-button v-else size="mini" type="success" disabled>
-            等待机评
-          </el-button>
+          <el-tooltip placement="top" v-else :disabled="false">
+            <div slot="content">
+              测验结束10分钟后可以进行人工批阅
+            </div>
+            <span style="margin-right:5px;">
+              <el-button size="mini" type="success" :disabled="true">
+              等待机评
+              </el-button>
+            </span>
+          </el-tooltip>
           <el-button v-permission="'TEACHER'" size="mini" type="primary" @click="handleEdit(row.id)">
             详情
           </el-button>

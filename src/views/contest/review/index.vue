@@ -4,6 +4,7 @@
       <Search v-model="filterQuery.search" class="filter-item" placeholder="输入用户名搜索" style="width:300px" />
       <el-button @click="openDialog('contest')" class="filter-item">查看测验成绩排行</el-button>
       <el-button @click="openDialog('coding')" class="filter-item">编程排行榜</el-button>
+      <el-button @click="openDialog('codeSubmission')" class="filter-item">编程题提交列表(可筛选)</el-button>
     </div>
     <Table :loading="loading" :table="table" :columns="columns" :buttons="buttons" @table-event="handleTableEvent"/>
     <Pagination
@@ -19,6 +20,9 @@
     <el-dialog title="编程排行榜" :visible.sync="dialogVisible.coding">
       <Rank :id="id"/>
     </el-dialog>
+    <el-dialog title="编程题提交列表" :visible.sync="dialogVisible.codeSubmission">
+      <CodeSubmission :id="id" @close="dialogVisible.codeSubmission = false" />
+    </el-dialog>
   </div>
 </template>
 
@@ -28,6 +32,7 @@ import Table from '@/components/Table'
 import Search from '@/components/TableTools/Search'
 import Pagination from '@/components/Pagination/index'
 import SubmissionTable from './components/SubmissionTable'
+import CodeSubmission from './components/CodeSubmission'
 import Rank from '@/components/Rank'
 export default {
   name: 'Log',
@@ -36,7 +41,8 @@ export default {
     Search,
     Pagination,
     SubmissionTable,
-    Rank
+    Rank,
+    CodeSubmission
   },
   data() {
     return {
@@ -56,6 +62,7 @@ export default {
       dialogVisible: {
         contest: false,
         coding: false,
+        codeSubmission: false
       },
     }
   },
