@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="sticky-header filter-container">
+      <el-button class="filter-item" @click="handleExport" type="primary" v-show="$route.name === 'Review'"> 导出 </el-button>
       <el-select class="filter-item" v-model="type" @change="getSubmissions" style="width:400px;">
         <el-option value="编程题">编程题</el-option>
         <el-option value="代码补全题">代码补全题</el-option>
@@ -64,6 +65,7 @@
 <script>
 import { parseTime } from '@/utils'
 import openWindow from '@/utils/open-window'
+import { downloadCodeExport, downloadCodeFillExport } from '@/api/contest'
 import { getContestSubmissions } from '@/api/submission'
 import { getSubmissions, getCodeFillSubmissions } from '@/api/submission'
 export default {
@@ -99,10 +101,14 @@ export default {
         编程题: getSubmissions,
         代码补全题: getCodeFillSubmissions,
       },
+      exportApi: {
+        编程题: downloadCodeExport,
+        代码补全题: downloadCodeFillExport,
+      },
       detailName: {
         编程题: 'code-submission',
         代码补全题: 'code-fill-submission',
-      },
+      }
     }
   },
   watch:{
@@ -168,6 +174,9 @@ export default {
       }).catch(err =>{
         this.$message.error('获取该用户批阅数据失败')
       })
+    },
+    async handleExport() {
+      await this.exportApi[this.type](this.contest, `测验${this.contest}-${this.type}提交导出.txt`)
     }
   },
 }

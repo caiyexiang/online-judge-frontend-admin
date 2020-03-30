@@ -2,6 +2,7 @@ import service from './axios'
 
 const typeMap = {
   excel: 'application/vnd.ms-excel',
+  text: 'text/txt'
 }
 
 export default {

@@ -56,6 +56,9 @@
       <el-button size="mini" @click="openDialog" v-if="hasSubmission" type="primary">
         查看历史提交
       </el-button>
+      <el-button type="success" size="mini" v-if="hasSubmission" icon="el-icon-document" @click="handleCopy(problem.answer, $event)">
+        复制代码
+      </el-button>
     </div>
     <CodeMirror
       :value="problem.answer"
@@ -71,6 +74,7 @@
 </template>
 
 <script>
+import clip from '@/utils/clipboard.js'
 import openWindow from '@/utils/open-window'
 import CodeMirror from '@/components/CodeMirror'
 import CodeSubmission from '@/views/contest/review/components/CodeSubmission'
@@ -122,6 +126,9 @@ export default {
     openDialog() {
       this.dialogVisible = true
     },
+    handleCopy(text, event) {
+      clip(text, event)
+    }
   },
 }
 </script>

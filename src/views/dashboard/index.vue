@@ -3,7 +3,7 @@
     <!-- TODO: 数据可视化 -->
     <h3>
       欢迎 {{ username }} 用户
-      <span v-if="ip">, 您的上一次登陆时间是 {{ time | parseTime }}, 登陆地址是 {{ ip }} </span>
+      <span v-if="prev_login">, 您的上一次登陆时间是 {{ prev_login | parseTime }}, 登陆地址是 {{ prev_login_ip }} </span>
     </h3>
   </div>
 </template>
@@ -24,11 +24,7 @@ export default {
     parseTime
   },
   computed: {
-    ...mapGetters(['username', 'id']),
-  },
-  created() {
-    this.ip = getLocalStorage('last_login_ip')
-    this.time = getLocalStorage('last_login_time')
+    ...mapGetters(['username', 'prev_login', 'prev_login_ip']),
   }
 }
 </script>

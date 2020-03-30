@@ -1,9 +1,9 @@
 import ajax from '@/utils/ajax'
 
-export function getAnnouncement () {
-  return ajax.get('/manage/announcement/1/')
+export function getAnnouncement (id) {
+  return ajax.get(`/manage/announcement/${id}/`)
 }
 
-export function updateAnnouncement (data) {
-  return ajax.put('/manage/announcement/1/', data)
+export function updateAnnouncement (id) {
+  return data => ajax.put(`/manage/announcement/${id}/`, data)
 }

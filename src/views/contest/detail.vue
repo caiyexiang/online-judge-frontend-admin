@@ -139,7 +139,7 @@ const defaultForm = {
   description: '',
   course: {},
   group: undefined,
-  visible: false,
+  visible: true,
   code_share: false,
   is_template: false,
   begin_time: '',

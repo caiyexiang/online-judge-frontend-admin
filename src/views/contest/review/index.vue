@@ -2,11 +2,12 @@
   <div class="app-container">
     <div class="filter-container">
       <Search v-model="filterQuery.search" class="filter-item" placeholder="输入用户名搜索" style="width:300px" />
-      <el-button @click="openDialog('contest')" class="filter-item">查看测验成绩排行</el-button>
-      <el-button @click="openDialog('coding')" class="filter-item">编程排行榜</el-button>
-      <el-button @click="openDialog('codeSubmission')" class="filter-item">编程题提交列表(可筛选)</el-button>
+      <el-button type="primary" @click="openDialog('contest')" class="filter-item">测验成绩排行及导出</el-button>
+      <el-button type="primary" @click="openDialog('codeScores')" class="filter-item">编程题分数排行及导出</el-button>
+      <el-button type="primary" @click="openDialog('codeSubmission')" class="filter-item">编程题提交列表及导出</el-button>
+      <el-button @click="openDialog('coding')" class="filter-item">传统OJ编程排行榜</el-button>
     </div>
-    <Table :loading="loading" :table="table" :columns="columns" :buttons="buttons" @table-event="handleTableEvent"/>
+    <Table :loading="loading" :table="table" :columns="columns" :buttons="buttons" @table-event="handleTableEvent" />
     <Pagination
       v-show="total > 0"
       :total="total"
@@ -15,13 +16,16 @@
       @pagination="getTable"
     />
     <el-dialog title="测验成绩排行" :visible.sync="dialogVisible.contest">
-      <SubmissionTable :id="id"/>
+      <SubmissionTable :id="id" />
     </el-dialog>
     <el-dialog title="编程排行榜" :visible.sync="dialogVisible.coding">
-      <Rank :id="id"/>
+      <Rank :id="id" />
     </el-dialog>
     <el-dialog title="编程题提交列表" :visible.sync="dialogVisible.codeSubmission">
       <CodeSubmission :id="id" @close="dialogVisible.codeSubmission = false" />
+    </el-dialog>
+    <el-dialog title="编程题分数排行" :visible.sync="dialogVisible.codeScores">
+      <CodeScores :id="id" :total="total" @close="dialogVisible.codeScores = false" />
     </el-dialog>
   </div>
 </template>
@@ -33,6 +37,7 @@ import Search from '@/components/TableTools/Search'
 import Pagination from '@/components/Pagination/index'
 import SubmissionTable from './components/SubmissionTable'
 import CodeSubmission from './components/CodeSubmission'
+import CodeScores from './components/CodeScores'
 import Rank from '@/components/Rank'
 export default {
   name: 'Log',
@@ -42,7 +47,8 @@ export default {
     Pagination,
     SubmissionTable,
     Rank,
-    CodeSubmission
+    CodeSubmission,
+    CodeScores
   },
   data() {
     return {
@@ -62,7 +68,8 @@ export default {
       dialogVisible: {
         contest: false,
         coding: false,
-        codeSubmission: false
+        codeSubmission: false,
+        codeScores: false
       },
     }
   },
@@ -100,9 +107,9 @@ export default {
     openDialog(name) {
       this.dialogVisible[name] = true
     },
-    handleTableEvent(name, {id}) {
-      this.$router.push({name: 'EditReview', params: {contest: this.id, submission: id}})
-    }
+    handleTableEvent(name, { id }) {
+      this.$router.push({ name: 'EditReview', params: { contest: this.id, submission: id } })
+    },
   },
 }
 </script>

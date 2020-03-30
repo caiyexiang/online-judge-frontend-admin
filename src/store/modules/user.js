@@ -8,6 +8,8 @@ const state = {
   permission: -1,
   name: '',
   nickname: '',
+  prev_login: '',
+  prev_login_ip: ''
 }
 
 const mutations = {
@@ -22,12 +24,14 @@ const mutations = {
     state.userid = userid
   },
   SET_USERINFO: (state, userinfo) => {
-    const { id, username, permission, name, nickname } = userinfo
+    const { id, username, permission, name, nickname, prev_login, prev_login_ip } = userinfo
     state.permission = permission
     state.username = username
     state.userid = id
     state.name = name
     state.nickname = nickname
+    state.prev_login = prev_login
+    state.prev_login_ip = prev_login_ip
   },
 }
 

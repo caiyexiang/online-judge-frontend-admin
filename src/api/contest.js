@@ -43,3 +43,11 @@ export function deleteContestTemplate (id) {
 export function getRank (id, params) {
   return ajax.get(`/manage/contests/${id}/rank/`, params)
 }
+
+export function downloadCodeExport(contest, filename) {
+  return ajax.download(`/manage/contests/${contest}/export/?type=submission`, 'text', filename)
+}
+
+export function downloadCodeFillExport(contest, filename) {
+  return ajax.download(`/manage/contests/${contest}/export/?type=code-fill-submission`, 'text', filename)
+}
