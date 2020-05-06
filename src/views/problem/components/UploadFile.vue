@@ -10,6 +10,7 @@
       :on-error="handleError"
       :on-success="handleSuccess"
       :with-credentials="true"
+      :headers="{'x-csrftoken':csrfToken}"
     >
       <el-button slot="trigger" size="small" type="primary" style="margin-right: 10px">
         选取文件
@@ -40,6 +41,7 @@
 
 <script>
 import { downloadProblemTemplate } from '@/api/problem'
+import { getCookie } from '@/utils/storage'
 export default {
   name: 'UploadFile',
   components:{
@@ -61,6 +63,9 @@ export default {
   computed: {
     errorNum () {
       return this.msgList.length
+    },
+    csrfToken () {
+      return getCookie('csrftoken')
     }
   },
   methods: {
