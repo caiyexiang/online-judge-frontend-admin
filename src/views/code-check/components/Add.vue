@@ -3,8 +3,8 @@
     <el-form-item label="名称" prop="name" :error="formError.name" required>
       <el-input v-model="form.name" />
     </el-form-item>
-    <el-form-item label="查重问题" prop="problem" :error="formError.problem" required>
-      <el-input v-model="form.problem" type="textarea" :rows="2" placeholder="每个问题ID之间以逗号(,)相隔" />
+    <el-form-item label="查重问题" prop="problems" :error="formError.problems" required>
+      <el-input v-model="form.problems" type="textarea" :rows="2" placeholder="每个问题ID之间以逗号(,)相隔" />
     </el-form-item>
     <el-form-item label="文件相似度" prop="td" :error="formError.td">
       <el-input-number v-model="form.td" :max="100" :min="0" />
@@ -47,7 +47,7 @@ export default {
     return {
       form: {
         name: '',
-        problem: '',
+        problems: '',
         td: 70,
         tr: 80,
         submission_end_time: '',
