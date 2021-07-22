@@ -65,7 +65,7 @@
     "vue-codemirror-lite": "^1.0.4",
     "vue-quill-editor": "^3.0.6",
     "vue-template-compiler": "^2.6.10",
-    "xlsx": "^0.15.5"
+    "xlsx": "^0.17.0"
   },
   "engines": {
     "node": ">=8.9",
